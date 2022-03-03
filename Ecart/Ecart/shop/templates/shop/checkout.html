@@ -1,0 +1,95 @@
+{% extends 'shop/basic.html' %}
+
+{% block title %} Ecart Checkout {% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <h2>Your cart items</h2>
+    <ul class="list-group my-3">
+    </ul>
+    <a class="list-group-item list-group-item-action active" aria-current="true">
+        Your cart total price is <B>Rs. <span id="totalprice"></span></B>
+    </a>
+    <h2 class='my-3'>Shipping address</h2>
+    <form action="/shop/checkout" method="post"> 
+        {% csrf_token %}
+        <input type="hidden" name="itemsJson" id="itemsJson">
+        <input type="hidden" name="amount" id="amount">
+        <div class="mb-3">
+            <label for="email" class="form-label">Email address</label>
+            <input type="email" class="form-control" id="email" name="email" placeholder="Email">
+        </div>
+        <div class="mb-3">
+            <label for="name" class="form-label">Name</label>
+            <input type="text" class="form-control" id="name" name="name" placeholder="Name">
+        </div>
+        <div class="mb-3">
+            <label for="address" class="form-label">Address</label>
+            <textarea class="form-control" name="address" id="address" rows="3"></textarea>
+        </div>
+        <div class="row g-3">
+            <div class="mb-3 col-md-6">
+                <label for="city" class="form-label">City</label>
+                <input type="text" class="form-control" id="city" name="city" placeholder="City">
+            </div>
+            <div class="mb-3 col-md-4">
+                <label for="state" class="form-label">State</label>
+                <input type="text" class="form-control" id="state" name="state" placeholder="State">
+            </div>
+            <div class="mb-3 col-md-2">
+                <label for="zip" class="form-label">Zip</label>
+                <input type="text" class="form-control" id="zip" name="zip" placeholder="Zip">
+            </div>
+        </div>
+        <div class="mb-3">
+            <label for="phone" class="form-label">Phone</label>
+            <input type="tel" class="form-control" id="phone" name="phone" placeholder="Phone">
+        </div>
+        <button type="submit" class="btn btn-primary">Place Order</button>
+    </form>
+
+</div>
+{% endblock %}
+
+{% block js %}
+<script>
+    if (localStorage.getItem('cart') == null) {
+        var cart = {};
+      } else {
+        cart = JSON.parse(localStorage.getItem('cart'))
+      }
+
+      if ($.isEmptyObject(cart)){
+        mystr = "<p>Your cart is empty</p>"
+        $('.list-group').append(mystr);
+      }else{
+          var sum = 0
+          var totalPrice = 0
+          for (item in cart){
+              let qty = cart[item][0];
+              let name = cart[item][1];
+              let price = cart[item][2];
+              sum += qty
+              totalPrice += parseInt(price)
+              mystr = `<li class="list-group-item d-flex justify-content-between align-items-center">
+                  ${name}
+                  <span class="badge bg-primary rounded-pill">${qty}</span>
+                </li>`
+                $('.list-group').append(mystr);
+            }
+            document.getElementById('cart').innerHTML = sum
+        }
+
+        $('#totalprice').append(totalPrice)
+
+        $("#itemsJson").val(JSON.stringify(cart));
+        {% if success %}
+            alert('Thanks for ordering by using Ecart. Your order id is {{id}}. Use it to track your order using our order tracker')
+            localStorage.clear();
+            document.location = "/shop"
+        {% endif %}
+        $('#amount').val($('#totalprice').html())
+
+</script>
+
+{% endblock  %}

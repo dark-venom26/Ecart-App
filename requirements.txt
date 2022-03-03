@@ -1,0 +1,11 @@
+asgiref==3.5.0
+distlib==0.3.4
+Django==4.0.2
+filelock==3.6.0
+Pillow==9.0.1
+platformdirs==2.5.1
+pycryptodome==3.14.1
+six==1.16.0
+sqlparse==0.4.2
+tzdata==2021.5
+virtualenv==20.13.2

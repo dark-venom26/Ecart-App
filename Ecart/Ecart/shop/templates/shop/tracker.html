@@ -1,0 +1,87 @@
+{% extends 'shop/basic.html' %}
+
+{% block title %} Ecart Order Tracker {% endblock %}
+
+{% block activeTracker %}active{% endblock  %}
+
+{% block body %}
+<div class="container mt-5">
+    <h2 class='mb-3'>Track Your Orders</h2>
+    <form action="/shop/tracker" method="post" id="trackerForm"> 
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="orderid" class="form-label">Order Id</label>
+            <input type="text" class="form-control" id="orderid" name="orderid" placeholder="Order Id">
+        </div>
+        <div class="mb-3">
+            <label for="email" class="form-label">Email address</label>
+            <input type="email" class="form-control" id="email" name="email" placeholder="Email">
+        </div>
+        <button type="submit" class="btn btn-primary">Track Order</button>
+    </form>
+    <h2>Your Order Status</h2>
+    <ul class="list-group my-3" id="status">
+    </ul>
+    
+    <h2>Your Orders</h2>
+    <ul class="list-group my-3" id='orders'>
+    </ul>
+
+</ul>
+</div>
+
+{% endblock %}
+
+{% block js %}
+<script>
+    $('#trackerForm').submit(function(event){
+        event.preventDefault();
+        $('.list-group').empty();
+        var formData = {
+            'orderId': $('input[name=orderid]').val(),
+            'email': $('input[name=email').val(),
+            'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val()
+            }
+        $.ajax({
+            type: 'POST',
+            url: '/shop/tracker',
+            data: formData,
+            encode: true
+        }).done(function(data){
+            updates = JSON.parse(data);
+            for(i=0; i<updates.length; i++){
+                let success = updates[i]['success'];
+                let msg = updates[i]['msg'];
+                if(success=="true"){
+                    let time = updates[i]['time'];
+                    mystr = `<li class="list-group-item d-flex justify-content-between align-items-center">
+                        ${msg}
+                        <span class="badge bg-primary rounded-pill">${time}</span>
+                      </li>`
+                    $('#status').append(mystr);
+                    
+                }else{
+                    $('#status').append(msg);
+                }
+                
+            }
+            let success = updates[0]['success'];
+            if(success="true"){
+                let orders = updates[0]['order'];
+                allorder = JSON.parse(orders);
+                console.log(allorder)
+                for(var items in allorder){
+                    qty = allorder[items][0]
+                    prod_name = allorder[items][1]
+                    mystr = `<li class="list-group-item d-flex justify-content-between align-items-center">
+                        ${prod_name}
+                        <span class="badge bg-primary rounded-pill">${qty}</span>
+                    </li>`
+                    $('#orders').append(mystr);
+                }
+            }
+
+        })
+    })
+</script>
+{% endblock  %}

@@ -1,0 +1,33 @@
+{% extends 'shop/basic.html' %}
+
+{% block title %} Ecart About {% endblock %}
+
+{% block activeContact %}active{% endblock  %}
+
+{% block body %}
+<div class="container">
+    <h2 class="my-2">Contact us</h2>
+    <form method="post" action="/shop/contact">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="exampleInputEmail1" class="form-label">Email address</label>
+            <input type="email" name="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+            <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
+        </div>
+        <div class="mb-3">
+            <label for="name" class="form-label">Name</label>
+            <input type="text" name="name" class="form-control" id="name">
+        </div>
+        <div class="mb-3">
+            <label for="phone" class="form-label">Phone No.</label>
+            <input type="number" name="phone" class="form-control" id="phone">
+        </div>
+        <div class="mb-3">
+            <textarea name="desc" class="form-control" id="" cols="30" rows="5"
+                placeholder="How can we help you?"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+</div>
+
+{% endblock %}

@@ -88,7 +88,7 @@ def product(request, prodId):
     return render(request, 'shop/product.html', {'product': product[0]})
 
 
-MERCHANT_KEY = 'oRIm&J%Ay&0j_bNA';
+MERCHANT_KEY = 'MERCHANT_KEY';
 
 def checkout(request):
     if request.method == "POST":
@@ -109,7 +109,7 @@ def checkout(request):
 
         #request paytm to transfer the amount to your account after payment by user
         param_dict = {
-            'MID':'VqTKBY28390083649785',
+            'MID':'MERCHANT_ID',
             'ORDER_ID': str(order.order_id),
             'TXN_AMOUNT': str(amount),
             'CUST_ID': email,
